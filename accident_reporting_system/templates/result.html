@@ -1,86 +1,64 @@
+```html
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>通報完成 - 事故通報系統</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <header class="site-header">
-        <div class="container header-inner">
-            <a class="site-title" href="{{ url_for('home') }}">事故通報系統</a>
+    <title>事故通報成功</title>
 
-            <nav>
-                <a href="{{ url_for('home') }}">首頁</a>
-                <a href="{{ url_for('reports') }}">事故事件</a>
-            </nav>
-        </div>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <header>
+        <h1>事故通報系統</h1>
+
+        <nav>
+            <a href="{{ url_for('home') }}">返回首頁</a>
+            <!-- 事故事件列表暫時停用 -->
+        </nav>
     </header>
 
-    <main class="container page">
-        <section class="panel">
-            <div class="success-mark">✓</div>
-            <h1>通報完成</h1>
+    <main>
+        <h2>事故通報結果</h2>
 
-            <p class="muted">
-                事故資料已成功儲存。
-            </p>
+        <p>事故通報已成功送出！</p>
 
-            <div class="report-detail">
-                <p><strong>通報編號：</strong>#{{ report_id }}</p>
-                <p><strong>事故地點：</strong>{{ location }}</p>
-                <p class="description-text">
-                    <strong>事故描述：</strong><br>
-                    {{ description }}
-                </p>
+        {% if report_id %}
+            <p>通報編號：{{ report_id }}</p>
+        {% endif %}
 
-                {% if latitude is not none and longitude is not none %}
-                    <p>
-                        <strong>GPS 座標：</strong>
-                        {{ latitude }}, {{ longitude }}
-                    </p>
+        {% if location %}
+            <p>事故地點：{{ location }}</p>
+        {% endif %}
 
-                    <a
-                        class="text-link"
-                        href="https://www.google.com/maps?q={{ latitude }},{{ longitude }}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        在 Google 地圖查看位置
-                    </a>
-                {% else %}
-                    <a
-                        class="text-link"
-                        href="https://www.google.com/maps/search/?api=1&query={{ location | urlencode }}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        在 Google 地圖搜尋事故地點
-                    </a>
-                {% endif %}
+        {% if description %}
+            <p>事故描述：{{ description }}</p>
+        {% endif %}
 
-                {% if image_filename %}
-                    <div class="result-image">
-                        <img
-                            src="{{ url_for('uploaded_file', filename=image_filename) }}"
-                            alt="事故照片"
-                        >
-                    </div>
-                {% endif %}
+        {% if latitude is defined and latitude is not none %}
+            <p>緯度：{{ latitude }}</p>
+        {% endif %}
+
+        {% if longitude is defined and longitude is not none %}
+            <p>經度：{{ longitude }}</p>
+        {% endif %}
+
+        {% if image_filename %}
+            <div>
+                <p>上傳的事故照片：</p>
+                <img
+                    src="{{ url_for('uploaded_file', filename=image_filename) }}"
+                    alt="事故照片"
+                    style="max-width: 100%; height: auto;">
             </div>
+        {% endif %}
 
-            <div class="button-row">
-                <a class="button" href="{{ url_for('home') }}">返回首頁</a>
-                <a class="button button-secondary" href="{{ url_for('reports') }}">
-                    查看所有事件
-                </a>
-            </div>
-        </section>
+        <p>
+            <a href="{{ url_for('home') }}">返回首頁，繼續通報</a>
+        </p>
     </main>
-
-    <footer class="site-footer">
-        事故通報系統
-    </footer>
 </body>
 </html>
+```

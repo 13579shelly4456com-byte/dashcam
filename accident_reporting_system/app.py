@@ -6,19 +6,18 @@ from flask import (
     Flask,
     render_template,
     request,
-    redirect,
-    url_for,
     send_from_directory,
 )
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
-# 固定使用專案資料夾內的資料庫，避免意外建立另一份資料庫
+# 固定使用專案資料夾內的資料庫
 BASE_DIR = Path(app.root_path)
 DATABASE = BASE_DIR / "accident.db"
 UPLOAD_FOLDER = BASE_DIR / "uploads"
 
+# 單次上傳大小限制：10 MB
 app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
 
 ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png", "webp"}
@@ -54,7 +53,7 @@ def init_db():
         ).fetchall()
     }
 
-    # 舊資料庫沒有這些欄位時才新增，不會刪除原本的通報
+    # 舊資料庫沒有這些欄位時才新增，不會刪除原有通報
     if "image_filename" not in columns:
         conn.execute(
             "ALTER TABLE reports ADD COLUMN image_filename TEXT"
@@ -98,7 +97,7 @@ def report():
     latitude_text = request.form.get("latitude", "").strip()
     longitude_text = request.form.get("longitude", "").strip()
 
-    # 必填欄位檢查
+    # 檢查必填欄位
     if not location or not description:
         return render_template(
             "index.html",
@@ -158,28 +157,45 @@ def report():
     # 寫入資料庫
     conn = get_db_connection()
 
-    cursor = conn.execute("""
-        INSERT INTO reports (
+    try:
+        cursor = conn.execute("""
+            INSERT INTO reports (
+                location,
+                description,
+                image_filename,
+                latitude,
+                longitude
+            )
+            VALUES (?, ?, ?, ?, ?)
+        """, (
             location,
             description,
             image_filename,
             latitude,
-            longitude
-        )
-        VALUES (?, ?, ?, ?, ?)
-    """, (
-        location,
-        description,
-        image_filename,
-        latitude,
-        longitude,
-    ))
+            longitude,
+        ))
 
-    report_id = cursor.lastrowid
+        report_id = cursor.lastrowid
+        conn.commit()
 
-    conn.commit()
-    conn.close()
+    except sqlite3.Error:
+        conn.rollback()
 
+        # 若資料庫寫入失敗，避免留下沒有對應通報的照片
+        if image_filename:
+            image_path = UPLOAD_FOLDER / image_filename
+            if image_path.exists():
+                image_path.unlink()
+
+        return render_template(
+            "index.html",
+            error="通報資料儲存失敗，請稍後再試。"
+        ), 500
+
+    finally:
+        conn.close()
+
+    # 只有資料庫寫入成功後，才顯示通報確認頁面
     return render_template(
         "result.html",
         location=location,
@@ -191,27 +207,30 @@ def report():
     )
 
 
-@app.route("/reports")
-def reports():
-    """顯示全部事故事件，不使用地圖版介面。"""
-    conn = get_db_connection()
-
-    rows = conn.execute("""
-        SELECT
-            id,
-            location,
-            description,
-            image_filename,
-            created_at,
-            latitude,
-            longitude
-        FROM reports
-        ORDER BY id DESC
-    """).fetchall()
-
-    conn.close()
-
-    return render_template("reports.html", reports=rows)
+# 暫時停用事故列表頁面，保留程式碼供未來恢復。
+# 若要重新啟用，取消以下區塊的註解即可。
+#
+# @app.route("/reports")
+# def reports():
+#     """顯示全部事故事件。"""
+#     conn = get_db_connection()
+#
+#     rows = conn.execute("""
+#         SELECT
+#             id,
+#             location,
+#             description,
+#             image_filename,
+#             created_at,
+#             latitude,
+#             longitude
+#         FROM reports
+#         ORDER BY id DESC
+#     """).fetchall()
+#
+#     conn.close()
+#
+#     return render_template("reports.html", reports=rows)
 
 
 @app.route("/uploads/<path:filename>")

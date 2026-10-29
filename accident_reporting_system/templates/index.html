@@ -1,116 +1,92 @@
+```html
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>事故通報系統</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <header class="site-header">
-        <div class="container header-inner">
-            <a class="site-title" href="{{ url_for('home') }}">事故通報系統</a>
 
-            <nav>
-                <a href="{{ url_for('home') }}">首頁</a>
-                <a href="{{ url_for('reports') }}">事故事件</a>
-            </nav>
-        </div>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <header>
+        <h1>事故通報系統</h1>
+
+        <nav>
+            <a href="{{ url_for('home') }}">首頁</a>
+            <!-- 事故事件列表暫時停用 -->
+        </nav>
     </header>
 
-    <main class="container page">
-        <section class="panel">
-            <h1>事故通報</h1>
-            <p class="muted">請填寫事故資訊，協助記錄與追蹤事故事件。</p>
+    <main>
+        <h2>事故通報</h2>
 
-            {% if error %}
-                <div class="alert-error">{{ error }}</div>
-            {% endif %}
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
 
-            <form
-                action="{{ url_for('report') }}"
-                method="POST"
-                enctype="multipart/form-data"
-            >
-                <div class="form-group">
-                    <label for="location">事故地點 *</label>
-                    <input
-                        type="text"
-                        id="location"
-                        name="location"
-                        placeholder="例如：台北市信義區"
-                        required
-                    >
-                </div>
+        <form action="{{ url_for('report') }}"
+              method="POST"
+              enctype="multipart/form-data">
 
-                <div class="form-group">
-                    <label for="description">事故描述 *</label>
-                    <textarea
-                        id="description"
-                        name="description"
-                        rows="5"
-                        placeholder="請描述事故發生的情況"
-                        required
-                    ></textarea>
-                </div>
+            <div>
+                <label for="location">事故地點：</label>
+                <input
+                    type="text"
+                    id="location"
+                    name="location"
+                    placeholder="請輸入事故發生地點"
+                    required>
+            </div>
 
-                <div class="form-group">
-                    <label for="latitude">GPS 緯度（選填）</label>
-                    <input
-                        type="number"
-                        id="latitude"
-                        name="latitude"
-                        step="any"
-                        min="-90"
-                        max="90"
-                        placeholder="例如：25.0330"
-                    >
-                </div>
+            <div>
+                <label for="description">事故描述：</label>
+                <textarea
+                    id="description"
+                    name="description"
+                    rows="5"
+                    placeholder="請描述事故發生的情況"
+                    required></textarea>
+            </div>
 
-                <div class="form-group">
-                    <label for="longitude">GPS 經度（選填）</label>
-                    <input
-                        type="number"
-                        id="longitude"
-                        name="longitude"
-                        step="any"
-                        min="-180"
-                        max="180"
-                        placeholder="例如：121.5654"
-                    >
-                </div>
+            <div>
+                <label for="latitude">緯度（選填）：</label>
+                <input
+                    type="number"
+                    id="latitude"
+                    name="latitude"
+                    step="any"
+                    min="-90"
+                    max="90"
+                    placeholder="例如：24.1477">
+            </div>
 
-                <p class="help-text">
-                    若有 GPS 座標，系統可以提供 Google 地圖位置連結。
-                    緯度與經度請一起填寫。
-                </p>
+            <div>
+                <label for="longitude">經度（選填）：</label>
+                <input
+                    type="number"
+                    id="longitude"
+                    name="longitude"
+                    step="any"
+                    min="-180"
+                    max="180"
+                    placeholder="例如：120.6736">
+            </div>
 
-                <div class="form-group">
-                    <label for="image">事故照片（選填）</label>
-                    <input
-                        type="file"
-                        id="image"
-                        name="image"
-                        accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
-                    >
-                    <p class="help-text">
-                        支援 JPG、JPEG、PNG、WEBP，檔案大小上限為 10 MB。
-                    </p>
-                </div>
+            <div>
+                <label for="image">事故照片（選填）：</label>
+                <input
+                    type="file"
+                    id="image"
+                    name="image"
+                    accept=".jpg,.jpeg,.png,.webp">
+            </div>
 
-                <button type="submit" class="button">送出通報</button>
-            </form>
-        </section>
-
-        <div class="center-actions">
-            <a class="button button-secondary" href="{{ url_for('reports') }}">
-                查看事故事件
-            </a>
-        </div>
+            <button type="submit">送出事故通報</button>
+        </form>
     </main>
-
-    <footer class="site-footer">
-        事故通報系統
-    </footer>
 </body>
 </html>
+```
