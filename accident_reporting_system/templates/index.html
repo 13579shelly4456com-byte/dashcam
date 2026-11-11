@@ -1,92 +1,159 @@
-```html
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>事故通報系統</title>
+    <title>事故資訊接收系統</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        #status {
+            text-align: center;
+            color: #666;
+            margin: 20px 0;
+        }
+
+        #result {
+            display: none;
+        }
+
+        .information {
+            line-height: 2;
+            margin-bottom: 20px;
+        }
+
+        .information p {
+            overflow-wrap: anywhere;
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
+            max-height: 450px;
+            margin: 20px auto;
+            border-radius: 8px;
+        }
+
+        .map-link {
+            display: inline-block;
+            margin-top: 10px;
+            color: #2563eb;
+        }
+    </style>
 </head>
 
 <body>
-    <header>
-        <h1>事故通報系統</h1>
 
-        <nav>
-            <a href="{{ url_for('home') }}">首頁</a>
-            <!-- 事故事件列表暫時停用 -->
-        </nav>
-    </header>
+<div class="container">
 
-    <main>
-        <h2>事故通報</h2>
+    <h1>事故資訊接收系統</h1>
 
-        {% if error %}
-            <p class="error">{{ error }}</p>
-        {% endif %}
+    <div id="status">
+        等待事故資訊傳入中...
+    </div>
 
-        <form action="{{ url_for('report') }}"
-              method="POST"
-              enctype="multipart/form-data">
+    <div id="result">
 
-            <div>
-                <label for="location">事故地點：</label>
-                <input
-                    type="text"
-                    id="location"
-                    name="location"
-                    placeholder="請輸入事故發生地點"
-                    required>
-            </div>
+        <h2>事故資訊</h2>
 
-            <div>
-                <label for="description">事故描述：</label>
-                <textarea
-                    id="description"
-                    name="description"
-                    rows="5"
-                    placeholder="請描述事故發生的情況"
-                    required></textarea>
-            </div>
+        <div class="information">
+            <p><strong>事故編號：</strong><span id="event_id"></span></p>
 
-            <div>
-                <label for="latitude">緯度（選填）：</label>
-                <input
-                    type="number"
-                    id="latitude"
-                    name="latitude"
-                    step="any"
-                    min="-90"
-                    max="90"
-                    placeholder="例如：24.1477">
-            </div>
+            <p><strong>接收時間：</strong><span id="timestamp"></span></p>
 
-            <div>
-                <label for="longitude">經度（選填）：</label>
-                <input
-                    type="number"
-                    id="longitude"
-                    name="longitude"
-                    step="any"
-                    min="-180"
-                    max="180"
-                    placeholder="例如：120.6736">
-            </div>
+            <p><strong>事故描述：</strong><span id="description"></span></p>
 
-            <div>
-                <label for="image">事故照片（選填）：</label>
-                <input
-                    type="file"
-                    id="image"
-                    name="image"
-                    accept=".jpg,.jpeg,.png,.webp">
-            </div>
+            <p><strong>緯度：</strong><span id="latitude"></span></p>
 
-            <button type="submit">送出事故通報</button>
-        </form>
-    </main>
+            <p><strong>經度：</strong><span id="longitude"></span></p>
+
+        </div>
+
+        
+
+        <h3>事故影像</h3>
+
+        <img id="accident_image" alt="事故影像">
+
+    </div>
+
+</div>
+
+<script>
+    let lastEventId = null;
+
+    async function getAccidentInformation() {
+
+        try {
+            const response = await fetch("/api/latest");
+            const data = await response.json();
+
+            if (!data.received) {
+                return;
+            }
+
+            const info = data.information;
+
+            // 避免重複更新同一筆事故資料
+            if (info.event_id === lastEventId) {
+                return;
+            }
+
+            lastEventId = info.event_id;
+
+            document.getElementById("status").textContent =
+                "已成功接收事故資訊";
+
+            document.getElementById("result").style.display = "block";
+
+            document.getElementById("event_id").textContent =
+                info.event_id;
+
+            document.getElementById("timestamp").textContent =
+                info.timestamp;
+
+            document.getElementById("description").textContent =
+                info.description;
+
+            document.getElementById("latitude").textContent =
+                info.latitude;
+
+            document.getElementById("longitude").textContent =
+                info.longitude;
+
+            // 顯示 Base64 圖片
+            document.getElementById("accident_image").src =
+                info.image_data;
+
+        } catch (error) {
+            console.error("取得事故資訊失敗：", error);
+        }
+    }
+
+    // 每秒向 Flask 確認是否收到新資料
+    setInterval(getAccidentInformation, 1000);
+
+    getAccidentInformation();
+</script>
+
 </body>
 </html>
-```
