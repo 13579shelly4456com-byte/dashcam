@@ -1,4 +1,4 @@
-path: dataset  # 宣告你的資料集根資料夾名稱
+path: C:/Users/user/Desktop/專題/dashcam/dataset  # 宣告你的資料集根資料夾名稱
 train: train/images  # 對應到 dataset/train/images
 val: valid/images    # 對應到 dataset/valid/images
 test: test/images    # (如果有 test 的話)
