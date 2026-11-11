@@ -2,6 +2,7 @@ path: C:/Users/user/Desktop/專題/dashcam/dataset  # 宣告你的資料集根�
 train: train/images  # 對應到 dataset/train/images
 val: valid/images    # 對應到 dataset/valid/images
 test: test/images    # (如果有 test 的話)
+test_seen: test_seen/images  # (如果有 test_seen 的話)
 
 nc: 5
 names: ['intact-car', 'intact-moto', 'damaged-car', 'damaged-moto', 'accident']

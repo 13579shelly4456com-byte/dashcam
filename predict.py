@@ -2,7 +2,7 @@ from ultralytics import YOLO
 
 def main():
     
-    model = YOLO("runs/detect/train-3/weights/best.pt")
+    model = YOLO("runs/detect/stage2/weights/best.pt")
 
     # 2. 對 test 資料夾裡面的圖片進行預測
     # save=True 會把框好物件的照片自動存到 runs/detect/predict 資料夾中
