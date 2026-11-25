@@ -1,7 +1,7 @@
 from ultralytics import YOLO
 
 def main():
-    model = YOLO("yolo11n.pt")  
+    model = YOLO("runs/detect/stage1-intact-v2/weights/best.pt")  # 載入你要繼續訓練的模型權重檔案
     model.train(
         data="data.yaml",
         epochs=300,
@@ -15,7 +15,7 @@ def main():
         cos_lr=True,
         warmup_epochs=1,
         close_mosaic=20,
-        name="stage2-B",
+        name="stage3",
     )
 
 if __name__ == '__main__':

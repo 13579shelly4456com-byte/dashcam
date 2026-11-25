@@ -1,6 +1,6 @@
 from ultralytics import YOLO
 
-names = ["intact-car", "intact-moto", "damaged-car", "damaged-moto", "accident"]
+names = ["intact-car", "intact-moto", "damaged-car", "damaged-moto","smoke", "fire", "damaged-ego"]
 models = [
     ("stage1 v3", "runs/detect/stage1-intact-v3/weights/best.pt"),
     ("stage2", "runs/detect/stage2/weights/best.pt"),   # 依你的資料夾名稱調整

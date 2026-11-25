@@ -5,8 +5,7 @@ from collections import defaultdict
 
 IMGSZ = 640
 THRESHOLDS = [20, 16, 12]
-names = {0: "intact-car", 1: "intact-moto", 2: "damaged-car",
-         3: "damaged-moto", 4: "accident"}
+names = {0: "intact-car", 1: "intact-moto", 2: "damaged-car", 3: "damaged-moto", 4: "smoke", 5: "fire", 6: "damaged-ego"}
 
 for split in ["train", "valid", "test"]:
     img_dir = Path(f"dataset/{split}/images")

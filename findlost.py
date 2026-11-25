@@ -2,8 +2,8 @@ from pathlib import Path
 from PIL import Image
 from ultralytics import YOLO
 
-model = YOLO("runs/detect/stage2/weights/best.pt")
-names = ["intact-car", "intact-moto", "damaged-car", "damaged-moto", "accident"]
+model = YOLO("runs/detect/stage3/weights/best.pt")
+names = ["intact-car", "intact-moto", "damaged-car", "damaged-moto","smoke", "fire", "damaged-ego"]
 img_dir = Path("dataset/valid/images")    # 依 data.yaml 的 valid 路徑調整
 lbl_dir = Path("dataset/valid/labels")
 

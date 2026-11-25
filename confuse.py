@@ -3,7 +3,7 @@ from PIL import Image, ImageDraw
 from ultralytics import YOLO
 
 model = YOLO("runs/detect/stage2/weights/best.pt")
-names = ["intact-car", "intact-moto", "damaged-car", "damaged-moto", "accident"]
+names = ["intact-car", "intact-moto", "damaged-car", "damaged-moto","smoke", "fire", "damaged-ego"]
 img_dir = Path("dataset/valid/images")
 lbl_dir = Path("dataset/valid/labels")
 out = Path("misses")

@@ -1,7 +1,7 @@
 from pathlib import Path
 from collections import Counter
 
-names = ["intact-car", "intact-moto", "damaged-car", "damaged-moto", "accident"]
+names = ["intact-car", "intact-moto", "damaged-car", "damaged-moto","smoke", "fire", "damaged-ego"]
 for split in ["train", "valid", "test"]:
     c = Counter()
     n_img = 0
